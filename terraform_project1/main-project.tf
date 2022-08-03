@@ -9,7 +9,8 @@ terraform{
 required_version = ">= 1.2.0"
  
 }
-resource "aws_vpc" "main" {
+##this block creates the vpc for the project
+resource "aws_vpc" "t7m-project-vpc" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
   
@@ -17,6 +18,7 @@ resource "aws_vpc" "main" {
     Name = "t7m-project-vpc"
   }
 }
+##this block creates the first public subnet for vpc
 resource "aws_subnet" "public-subnet1" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
@@ -25,6 +27,7 @@ resource "aws_subnet" "public-subnet1" {
     Name = "t7m-public-subnet1"
   }
 }
+##this block creates second public subnet for vpc
 resource "aws_subnet" "public-subnet2" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.2.0/24"
