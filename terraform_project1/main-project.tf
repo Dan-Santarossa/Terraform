@@ -12,7 +12,7 @@ required_version = ">= 1.2.0"
 resource "aws_vpc" "main" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
-
+  
   tags = {
     Name = "t7m-project-vpc"
   }
@@ -20,7 +20,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public-subnet1" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
-
+  availability_zone = us-east-1a
   tags = {
     Name = "t7m-public-subnet1"
   }
@@ -28,7 +28,7 @@ resource "aws_subnet" "public-subnet1" {
 resource "aws_subnet" "public-subnet2" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.2.0/24"
-
+  availability_zone = us-east-1b
   tags = {
     Name = "t7m-public-subnet2"
   }
