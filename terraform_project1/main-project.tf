@@ -23,7 +23,7 @@ resource "aws_subnet" "public-subnet1" {
   cidr_block        = "10.0.1.0/24"
   availability_zone = "us-east-1a"
   tags = {
-    Name = "t7m-public-subnet1"
+    Name = "t7m-public-subnet1a"
   }
 }
 ##this block creates second public subnet for vpc
@@ -32,6 +32,6 @@ resource "aws_subnet" "public-subnet2" {
   cidr_block        = "10.0.2.0/24"
   availability_zone = "us-east-1b"
   tags = {
-    Name = "t7m-public-subnet2"
+    Name = "t7m-public-subnet1b"
   }
 }
