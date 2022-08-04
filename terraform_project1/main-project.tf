@@ -1,3 +1,6 @@
+##Two tier architecture in AWS 
+
+#Define the provider: Amazon Web Services
 terraform {
   required_providers {
     aws = {
