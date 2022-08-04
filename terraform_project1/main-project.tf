@@ -63,11 +63,17 @@ resource "aws_subnet" "private-subnet2" {
     Tier = "Private"
   }
 }
-##this block will create our route table
+##this block creates an internet gateway
+resource "aws_internet_gateway" "t7m-ig" {
+  vpc_id  = aws_vpc.t7m-project-vpc.id
+  tags    = {
+    Name = "t7m-ig"
+  }
+}
+##this block creates our route table
 resource "aws_route_table" "t7m-public-rt" {
-  vpc_id = aws_vpc.t7m-project-vpc
+  vpc_id = aws_vpc.t7m-project-vpc.id
   tags = {
     "Name" = "t7m-public-rt"
   }
-  
 }
