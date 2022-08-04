@@ -20,7 +20,7 @@ resource "aws_vpc" "main" {
     Name = "t7m-project-vpc"
   }
 }
-##this block creates the first public subnet for vpc
+##this block creates the first public subnet
 resource "aws_subnet" "public-subnet1" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.1.0/24"
@@ -29,7 +29,7 @@ resource "aws_subnet" "public-subnet1" {
     Name = "t7m-public-subnet1a"
   }
 }
-##this block creates second public subnet for vpc
+##this block creates second public subnet
 resource "aws_subnet" "public-subnet2" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.2.0/24"
@@ -37,4 +37,21 @@ resource "aws_subnet" "public-subnet2" {
   tags = {
     Name = "t7m-public-subnet1b"
   }
+}
+##this block creates the first private subnet 
+resource "aws_subnet" "private-subnet1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-east-1c"
+  tags = {
+    Name = "t7m-private-subnet1c"
+  }  
+}
+resource "aws_subnet" "private-subnet1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.4.0/24"
+  availability_zone = "us-east-1d"
+  tags = {
+    Name = "t7m-private-subnet1d"
+  }  
 }
