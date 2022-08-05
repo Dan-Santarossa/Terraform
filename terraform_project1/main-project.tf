@@ -147,7 +147,7 @@ resource "aws_instance" "t7m-ubuntu" {
         sudo apt update -y
         sudo apt install apache2 -y
         sudo service apache2 start
-        echo "<html><body><h1>Ubuntu One</h1></body></html>" > /var/www/html/index.html
+        echo "<html><body><h1>What's up Ubuntu One</h1></body></html>" > /var/www/html/index.html
         EOF
 
   tags = {
@@ -167,7 +167,7 @@ resource "aws_instance" "t7m-ubuntu2" {
         sudo apt update -y
         sudo apt install apache2 -y
         sudo service apache2 start
-        echo "<html><body><h1>Ubuntu Two</h1></body></html>" > /var/www/html/index.html
+        echo "<html><body><h1>What's up Ubuntu Two</h1></body></html>" > /var/www/html/index.html
         EOF
 
   tags = {
