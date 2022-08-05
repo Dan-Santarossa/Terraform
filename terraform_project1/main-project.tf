@@ -236,7 +236,7 @@ resource "aws_lb" "t7m-project-alb" {
 
 ##create target group for load balancer
 resource "aws_lb_target_group" "t7m-project-tg" {
-  name       = "project-tg"
+  name       = "t7m-project-tg"
   port       = 80
   protocol   = "HTTP"
   vpc_id     = aws_vpc.t7m-project-vpc.id
@@ -289,6 +289,7 @@ resource "aws_security_group" "t7m-alb-sg" {
   }
 }
 
+##END
 
 
 
