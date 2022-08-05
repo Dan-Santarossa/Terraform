@@ -8,7 +8,9 @@ terraform {
       version = "~> 4.16"
     }
   }
-  required_version = ">= 1.2.0"
+}
+provider "aws" {
+  region = "us-east-1"
 }
 ##this block creates the vpc 
 resource "aws_vpc" "t7m-project-vpc" {
@@ -89,13 +91,7 @@ resource "aws_route_table_association" "b" {
   subnet_id      = aws_subnet.t7m-public-subnet1b.id
   route_table_id = aws_route_table.t7m-public-rt.id
 }
-##create EC2 instances for public subnets
-##this block creates a keypair so you can ssh into instances  
-# resource "aws_key_pair" "t7m-key" {
-#   key_name   = "t7m-key"
-#   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD3F6tyPEFEzV0LX3X8BsXdMsQz1x2cEikKDEY0aIj41qgxMCP/iteneqXSIFZBp5vizPvaoIR3Um9xK7PGoW8giupGn+EPuxIA4cDM4vzOqOkiMPhz5XK0whEjkVzTo4+S0puvDZuwIsdiW9mxhJc7tgBNL0cYlWSYVkz4G/fslNfRPW5mYAM49f4fhtxPb5ok4Q2Lg9dPKVHO/Bgeu5woMc7RY0p1ej6D4CKFE6lymSDJpW0YHX/wqE9+cfEauh7xZcG0q9t2ta6F6fmX0agvpFyZo8aFbXeUBr7osSCJNgvavWbM/06niWrOvYX2xwWdhXmXSrbX8ZbabVohBK41 email@example.com"
-# }
-#this block creates a security group for our public instances
+##this block creates a security group for our public instances
 resource "aws_security_group" "t7m-public-sg" {
   name        = "t7m-public-sg"
   description = "Allow inbound traffic on port 80 and 22"
@@ -106,14 +102,14 @@ resource "aws_security_group" "t7m-public-sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.t7m-project-vpc.cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     description = "ssh into instance"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [aws_vpc.t7m-project-vpc.cidr_block]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -128,19 +124,19 @@ resource "aws_security_group" "t7m-public-sg" {
     Name = "t7m-public-sg"
   }
 }
-#creates and ubuntu ec2 in first public subnet
+##creates and ubuntu ec2 in first public subnet
 resource "aws_instance" "t7m-ubuntu" {
   ami                    = "ami-052efd3df9dad4825"
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.t7m-public-subnet1a.id
   count                  = 1
   vpc_security_group_ids = [aws_security_group.t7m-public-sg.id]
-  key_name               = "EC2sshkey"
+  key_name               = "EC2sshkey" ##using an existing keypair
   user_data              = <<EOF
   #!/bin/bash
-  apt-get update -y
-  apt-get install httpd -y
-  service httpd start
+  sudo apt-get update -y
+  sudo apt-get install apache2 -y
+  sudo service apache2 start
   EOF
 
   tags = {
@@ -157,9 +153,9 @@ resource "aws_instance" "t7m-ubuntu2" {
   key_name               = "EC2sshkey"
   user_data              = <<EOF
   #!/bin/bash
-  apt-get update -y
-  apt-get install httpd -y
-  service httpd start
+  sudo apt-get update -y
+  sudo apt-get install apache2 -y
+  sudo service apache2 start
   EOF
 
   tags = {
