@@ -12,6 +12,7 @@ terraform {
 provider "aws" {
   region = "us-east-1"
 }
+
 ##create the vpc with specified cidr block  
 resource "aws_vpc" "t7m-project-vpc" {
   cidr_block = "10.0.0.0/16"
@@ -20,6 +21,7 @@ resource "aws_vpc" "t7m-project-vpc" {
     Name = "t7m-project-vpc"
   }
 }
+
 ##creates the first public subnet
 resource "aws_subnet" "t7m-public-subnet1a" {
   vpc_id                  = aws_vpc.t7m-project-vpc.id
@@ -31,6 +33,7 @@ resource "aws_subnet" "t7m-public-subnet1a" {
     Tier = "Public"
   }
 }
+
 ##creates second public subnet
 resource "aws_subnet" "t7m-public-subnet1b" {
   vpc_id                  = aws_vpc.t7m-project-vpc.id
@@ -42,6 +45,7 @@ resource "aws_subnet" "t7m-public-subnet1b" {
     Tier = "Public"
   }
 }
+
 ##creates the first private subnet 
 resource "aws_subnet" "t7m-private-subnet1c" {
   vpc_id                  = aws_vpc.t7m-project-vpc.id
@@ -53,6 +57,7 @@ resource "aws_subnet" "t7m-private-subnet1c" {
     Tier = "Private"
   }
 }
+
 ##creates the second private subnet
 resource "aws_subnet" "t7m-private-subnet1d" {
   vpc_id                  = aws_vpc.t7m-project-vpc.id
@@ -64,6 +69,7 @@ resource "aws_subnet" "t7m-private-subnet1d" {
     Tier = "Private"
   }
 }
+
 ##creates an internet gateway to give our subnets access to internet
 resource "aws_internet_gateway" "t7m-ig" {
   vpc_id = aws_vpc.t7m-project-vpc.id
@@ -71,6 +77,7 @@ resource "aws_internet_gateway" "t7m-ig" {
     Name = "t7m-ig"
   }
 }
+
 ##creates our route table and associates it with our vpc
 resource "aws_route_table" "t7m-public-rt" {
   vpc_id = aws_vpc.t7m-project-vpc.id
@@ -82,6 +89,7 @@ resource "aws_route_table" "t7m-public-rt" {
     "Name" = "t7m-public-rt"
   }
 }
+
 ##associate the route table to the public subnets
 resource "aws_route_table_association" "a" {
   subnet_id      = aws_subnet.t7m-public-subnet1a.id
@@ -91,6 +99,7 @@ resource "aws_route_table_association" "b" {
   subnet_id      = aws_subnet.t7m-public-subnet1b.id
   route_table_id = aws_route_table.t7m-public-rt.id
 }
+
 ##-----------------Instances for ubuntu server, database and security groups
 ##creates a security group for our public instances
 resource "aws_security_group" "t7m-public-sg" {
@@ -125,6 +134,7 @@ resource "aws_security_group" "t7m-public-sg" {
     Name = "t7m-public-sg"
   }
 }
+
 ##creates an ubuntu ec2 in first public subnet
 resource "aws_instance" "t7m-ubuntu" {
   ami                    = "ami-052efd3df9dad4825"
@@ -137,12 +147,14 @@ resource "aws_instance" "t7m-ubuntu" {
         sudo apt update -y
         sudo apt install apache2 -y
         sudo service apache2 start
+        echo "<html><body><h1>Ubuntu One</h1></body></html>" > /var/www/html/index.html
         EOF
 
   tags = {
     Name = "t7m-ubuntu"
   }
 }
+
 ##creates an ubuntu ec2 in second public subnet
 resource "aws_instance" "t7m-ubuntu2" {
   ami                    = "ami-052efd3df9dad4825"
@@ -155,17 +167,20 @@ resource "aws_instance" "t7m-ubuntu2" {
         sudo apt update -y
         sudo apt install apache2 -y
         sudo service apache2 start
+        echo "<html><body><h1>Ubuntu Two</h1></body></html>" > /var/www/html/index.html
         EOF
 
   tags = {
     Name = "t7m-ubuntu2"
   }
 }
+
 ##creates a subnet group for the database which is required 
 resource "aws_db_subnet_group" "t7m-db-subnet" {
   name       = "t7m-db-subnet"
   subnet_ids = [aws_subnet.t7m-private-subnet1c.id, aws_subnet.t7m-private-subnet1d.id]
 }
+
 ##creates a security group for the private subnets
 resource "aws_security_group" "t7m-private-sg" {
   name        = "t7m-private-sg"
@@ -173,27 +188,27 @@ resource "aws_security_group" "t7m-private-sg" {
   vpc_id      = aws_vpc.t7m-project-vpc.id
 
   ingress {
-    from_port        = 3306
-    to_port          = 3306
-    protocol         = "tcp"
-    cidr_blocks      = ["10.0.0.0/16"]
-    security_groups = [ aws_security_group.t7m-public-sg.id ]
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
+    cidr_blocks     = ["10.0.0.0/16"]
+    security_groups = [aws_security_group.t7m-public-sg.id]
   }
   ingress {
-    from_port         = 22
-    to_port           = 22
-    protocol          = "tcp"
-    cidr_blocks       = ["0.0.0.0/0"]
-    security_groups = [ aws_security_group.t7m-public-sg.id ]
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    cidr_blocks     = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.t7m-public-sg.id]
   }
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 ##create database instance
 resource "aws_db_instance" "t7mdb" {
   allocated_storage    = 5 ##reduced the allocated_storage to 5 to speed up build time
@@ -208,6 +223,7 @@ resource "aws_db_instance" "t7mdb" {
   publicly_accessible  = false
   skip_final_snapshot  = true
 }
+
 ##-----------------create an application load balancer and security group
 ##create the application load balancer 
 resource "aws_lb" "t7m-project-alb" {
