@@ -132,12 +132,12 @@ resource "aws_instance" "t7m-ubuntu" {
   count                  = 1
   vpc_security_group_ids = [aws_security_group.t7m-public-sg.id]
   key_name               = "EC2sshkey" ##using an existing keypair
-  user_data              = <<EOF
-  #!/bin/bash
-  sudo apt update -y
-  sudo apt install apache2 -y
-  sudo service apache2 start
-  EOF
+  user_data              = <<-EOF
+        #!/bin/bash
+        sudo apt update -y
+        sudo apt install apache2 -y
+        sudo service apache2 start
+        EOF
 
   tags = {
     Name = "t7m-ubuntu"
@@ -151,12 +151,12 @@ resource "aws_instance" "t7m-ubuntu2" {
   count                  = 1
   vpc_security_group_ids = [aws_security_group.t7m-public-sg.id]
   key_name               = "EC2sshkey"
-  user_data              = <<EOF
-  #!/bin/bash
-  sudo apt update -y
-  sudo apt install apache2 -y
-  sudo service apache2 start
-  EOF
+  user_data              = <<-EOF
+        #!/bin/bash
+        sudo apt update -y
+        sudo apt install apache2 -y
+        sudo service apache2 start
+        EOF
 
   tags = {
     Name = "t7m-ubuntu2"
