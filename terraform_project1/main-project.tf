@@ -263,16 +263,16 @@ resource "aws_lb_listener" "t7m-listener" {
   load_balancer_arn = aws_lb.t7m-project-alb.arn
   port              = "80"
   protocol          = "HTTP"
-
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.t7m-project-tg.arn
   }
 }
+
 ##create security group for the application load balancer
 resource "aws_security_group" "t7m-alb-sg" {
   name        = "t7m-alb-sg"
-  description = "security group for alb"
+  description = "security group for load balancer"
   vpc_id      = aws_vpc.t7m-project-vpc.id
 
   ingress {
