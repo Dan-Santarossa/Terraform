@@ -134,8 +134,8 @@ resource "aws_instance" "t7m-ubuntu" {
   key_name               = "EC2sshkey" ##using an existing keypair
   user_data              = <<EOF
   #!/bin/bash
-  sudo apt-get update -y
-  sudo apt-get install apache2 -y
+  sudo apt update -y
+  sudo apt install apache2 -y
   sudo service apache2 start
   EOF
 
@@ -153,8 +153,8 @@ resource "aws_instance" "t7m-ubuntu2" {
   key_name               = "EC2sshkey"
   user_data              = <<EOF
   #!/bin/bash
-  sudo apt-get update -y
-  sudo apt-get install apache2 -y
+  sudo apt update -y
+  sudo apt install apache2 -y
   sudo service apache2 start
   EOF
 
@@ -162,7 +162,26 @@ resource "aws_instance" "t7m-ubuntu2" {
     Name = "t7m-ubuntu2"
   }
 }
+##creates a subnet group for the database which is required 
+resource "aws_db_subnet_group" "t7m-db-subnet" {
+  name       = "t7m-db-subnet"
+  subnet_ids = [aws_subnet.t7m-private-subnet1c.id, aws_subnet.t7m-private-subnet1d.id]
+}
 
+##create database instance
+resource "aws_db_instance" "t7mdb" {
+  allocated_storage    = 5
+  engine               = "mysql"
+  engine_version       = "5.7"
+  instance_class       = "db.t2.micro"
+  identifier           = "t7mdb"
+  db_name              = "t7mdb" ##could not use hyphen in name
+  username             = "admin"
+  password             = "password"
+  db_subnet_group_name = aws_db_subnet_group.t7m-db-subnet.id
+  publicly_accessible  = false
+  skip_final_snapshot  = true
+}
 
 
 
